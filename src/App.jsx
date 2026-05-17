@@ -10,7 +10,11 @@ function App() {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
-      setUser(u);
+      if (u && u.emailVerified) {
+        setUser(u);
+      } else {
+        setUser(null);
+      }
       setLoading(false);
     });
     return () => unsub();
