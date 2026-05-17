@@ -47,48 +47,117 @@ export default function Login() {
     setLoading(false);
   };
 
-  if (verifyScreen) {
-    return (
+  // Login.jsx ke verifyScreen part ko replace karo — pura naya version:
+
+if (verifyScreen) {
+  return (
+    <div style={{
+      display: "flex", justifyContent: "center",
+      alignItems: "center", height: "100vh",
+      background: "#0f0f0f",
+    }}>
       <div style={{
-        display: "flex", justifyContent: "center",
-        alignItems: "center", height: "100vh", background: "#0f0f0f",
+        background: "#1a1a1a", border: "1px solid #2a2a2a",
+        borderRadius: "16px", padding: "40px 32px",
+        width: "100%", maxWidth: "400px", textAlign: "center",
       }}>
+
+        {/* Icon circle */}
         <div style={{
-          background: "#1a1a1a", padding: "40px", borderRadius: "16px",
-          width: "360px", border: "1px solid #2a2a2a", textAlign: "center",
+          width: "72px", height: "72px", borderRadius: "50%",
+          background: "#1e3a5f", display: "flex",
+          alignItems: "center", justifyContent: "center",
+          margin: "0 auto 24px",
         }}>
-          <div style={{ fontSize: "52px", marginBottom: "16px" }}>{"📧"}</div>
-          <h2 style={{ color: "#fff", fontSize: "20px", marginBottom: "12px" }}>
-            Email Verify Karo!
-          </h2>
-          <p style={{ color: "#666", fontSize: "13px", marginBottom: "8px" }}>
-            {"Verification link bheja hai:"}
-          </p>
-          <p style={{ color: "#4f46e5", fontSize: "14px", marginBottom: "24px" }}>
-            {email}
-          </p>
-          <p style={{ color: "#555", fontSize: "12px", marginBottom: "24px" }}>
-            Inbox me jaao → Link pe click karo → Wapas aao login karo
-          </p>
-          <button
-            onClick={() => {
-              setVerifyScreen(false);
-              setIsSignup(false);
-              setMessage("✅ Ab login karo!");
-            }}
-            style={{
-              width: "100%", padding: "12px",
-              background: "linear-gradient(135deg, #4f46e5, #7c3aed)",
-              border: "none", borderRadius: "8px",
-              color: "#fff", fontSize: "15px", cursor: "pointer",
-            }}
-          >
-            {"Login Page Pe Jao"}
-          </button>
+          <span style={{ fontSize: "32px" }}>📧</span>
         </div>
+
+        <h2 style={{ color: "#fff", fontSize: "20px", fontWeight: "500", margin: "0 0 8px" }}>
+          Verify your email
+        </h2>
+        <p style={{ color: "#666", fontSize: "14px", margin: "0 0 4px" }}>
+          We sent a verification link to
+        </p>
+        <p style={{ color: "#4f8ef7", fontSize: "14px", fontWeight: "500", margin: "0 0 24px" }}>
+          {email}
+        </p>
+
+        {/* Steps */}
+        <div style={{
+          background: "#111", borderRadius: "10px",
+          padding: "16px", marginBottom: "24px", textAlign: "left",
+        }}>
+          {[
+            "Apna email inbox kholo",
+            "Study Helper ka email dhundo",
+            '"Verify Email" link pe click karo',
+          ].map((step, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: i < 2 ? "10px" : "0" }}>
+              <div style={{
+                width: "24px", height: "24px", borderRadius: "50%",
+                background: "#1e3a5f", display: "flex",
+                alignItems: "center", justifyContent: "center", flexShrink: 0,
+              }}>
+                <span style={{ fontSize: "12px", fontWeight: "500", color: "#4f8ef7" }}>{i + 1}</span>
+              </div>
+              <p style={{ color: "#888", fontSize: "13px", margin: 0 }}>{step}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Resend button */}
+        <button
+          onClick={async () => {
+            try {
+              const res = await signInWithEmailAndPassword(auth, email, password);
+              await sendEmailVerification(res.user);
+              await signOut(auth);
+              setMessage("✅ Email dobara bheja gaya!");
+            } catch {
+              setMessage("❌ Resend nahi ho saka, thodi der baad try karo.");
+            }
+          }}
+          style={{
+            width: "100%", padding: "11px",
+            background: "#1e3a5f", border: "none",
+            borderRadius: "8px", color: "#4f8ef7",
+            fontSize: "14px", fontWeight: "500",
+            cursor: "pointer", marginBottom: "10px",
+            display: "flex", alignItems: "center",
+            justifyContent: "center", gap: "8px",
+          }}
+        >
+          🔄 Resend verification email
+        </button>
+
+        {/* Back button */}
+        <button
+          onClick={() => { setVerifyScreen(false); setIsSignup(false); setMessage(""); }}
+          style={{
+            width: "100%", padding: "11px",
+            background: "transparent", border: "1px solid #2a2a2a",
+            borderRadius: "8px", color: "#666",
+            fontSize: "14px", cursor: "pointer",
+            display: "flex", alignItems: "center",
+            justifyContent: "center", gap: "8px",
+          }}
+        >
+          ← Back to login
+        </button>
+
+        {message && (
+          <p style={{ fontSize: "12px", marginTop: "16px", color: message.includes("✅") ? "#4ade80" : "#f87171" }}>
+            {message}
+          </p>
+        )}
+
+        <p style={{ fontSize: "12px", color: "#444", marginTop: "16px" }}>
+          Email nahi mila? Spam folder check karo
+        </p>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   return (
     <div style={{
